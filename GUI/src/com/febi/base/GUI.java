@@ -1,7 +1,13 @@
 package com.febi.base;
+import java.util.*;
 import javax.swing.*;  
 import java.awt.event.*;  
-public class GUI implements ActionListener{  
+
+import com.febi.base.GUIBase;
+
+public class GUI implements ActionListener{ 
+	static int  count = 1;
+	static Map<String,List<String>> test;
     JTextField tf1,tf2,tf3;  
     JButton b1,b2,b3,b4;
     JTextArea area;
@@ -9,6 +15,8 @@ public class GUI implements ActionListener{
     StringBuilder sb;
     JRadioButton rb1,rb2;
     GUI(){
+    	
+    	test = new HashMap<String,List<String>>();
     	sb = new StringBuilder();
         JFrame f= new JFrame("Edit Validater");  
         rb1=new JRadioButton("WNI");    
@@ -89,6 +97,12 @@ public class GUI implements ActionListener{
         	
         	sb.append(" "+value);
         	area.setText(sb.toString());
+        	String keyv = "set_"+count;
+        	List<String> loadValues = new ArrayList<String>();
+        	loadValues.add(String.valueOf(cb1.getSelectedIndex()));
+        	loadValues.add(String.valueOf(cb2.getSelectedIndex()));
+        	loadValues.add(value);
+        	test.put(keyv, loadValues);
 	     }
         
         if(e.getSource()==b1) {
@@ -99,6 +113,7 @@ public class GUI implements ActionListener{
         		sb.append("For WNP-"+CID+" ");
         	}
         	
+        	
         	sb.append(cb1.getItemAt(cb1.getSelectedIndex()));
         	
         	sb.append(" ");
@@ -108,8 +123,15 @@ public class GUI implements ActionListener{
         	sb.append(" "+value);
         	
         	sb.append(" AND ");
-        	
         	area.setText(sb.toString());
+        	
+        	String keyv = "set_"+count;
+        	List<String> loadValues = new ArrayList<String>();
+        	loadValues.add(String.valueOf(cb1.getSelectedIndex()));
+        	loadValues.add(String.valueOf(cb2.getSelectedIndex()));
+        	loadValues.add(value);
+        	test.put(keyv, loadValues);
+        	count++;
         }
         if(e.getSource()==b2) {
         	if(!sb.toString().equals("")) {
@@ -121,6 +143,13 @@ public class GUI implements ActionListener{
             	
             	sb.append(" OR ");
             	area.setText(sb.toString());
+            	String keyv = "set_"+count;
+            	List<String> loadValues = new ArrayList<String>();
+            	loadValues.add(String.valueOf(cb1.getSelectedIndex()));
+            	loadValues.add(String.valueOf(cb2.getSelectedIndex()));
+            	loadValues.add(value);
+            	test.put(keyv, loadValues);
+            	count++;
         	}else {
         		if(rb1.isSelected()) {
             		sb.append("For WNI-"+CID+" ");
@@ -139,6 +168,13 @@ public class GUI implements ActionListener{
             	sb.append(" OR ");
             	
             	area.setText(sb.toString());
+            	String keyv = "set_"+count;
+            	List<String> loadValues = new ArrayList<String>();
+            	loadValues.add(String.valueOf(cb1.getSelectedIndex()));
+            	loadValues.add(String.valueOf(cb2.getSelectedIndex()));
+            	loadValues.add(value);
+            	test.put(keyv, loadValues);
+            	count++;
         	}
         }
         if(e.getSource()==b4) {
@@ -146,10 +182,48 @@ public class GUI implements ActionListener{
         	sb.append("then "+edit+" should be triggered");
         	area.setText(sb.toString());
         	b3.setEnabled(false);
+            Set<String> retrieveValue = test.keySet();//For printing the map which has trigger values
+            int nCond=0;
+            for(String key:retrieveValue) {
+            	System.out.println(key);
+            	List<String> jill = test.get(key);
+            	for(String printV:jill) {
+            		System.out.println(printV);	
+            	}
+            	if(key.contains("set")) {
+            		nCond++;
+            	}
+            }
+         
+            int timeToRun = nCond*2;
+            Test tr = new Test();
+            ArrayList<boolean[]>  result = tr.scenarioGenerator(nCond);
+            
+            
+            List<Map<String,List<String>>> storeV = new ArrayList<Map<String,List<String>>>();
+            for(int i=0;i<timeToRun;i++) {
+            storeV.add(test);
+            }
+            
+            for(int i=1;i<timeToRun;i++) {
+            	
+                for(boolean b: result.get(i))
+                {
+                
+                	int getSet = Integer.parseInt(storeV.get(i).get("set_1").get(1));
+                	System.out.print(b+" ");
+                }
+            }
+            
+
+
         }
          
  
     }  
 public static void main(String[] args) {  
-    new GUI();  
+		new GUI();
+	
+
+    
 } }  
