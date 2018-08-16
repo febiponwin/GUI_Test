@@ -75,4 +75,25 @@ System.out.println("AND condition");
 //}
         
     }
+    
+    
+    public void oneAnd(ArrayList<boolean[]> result) {
+    	System.out.println("AND condition");
+        for(int i=1;i<result.size();i++)
+        {
+            for(boolean b: result.get(i))
+            {
+                System.out.print(b+" ");
+            }
+            if(result.get(i)[0]&&result.get(i)[1]/*&&result.get(i)[2]*/) {
+            System.out.println("should be triggered");
+            }else {
+            System.out.println("should not be triggered");
+            }
+            System.out.println();
+          
+            
+        }
+    }
+    
 }
