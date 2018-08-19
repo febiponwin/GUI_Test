@@ -1,6 +1,7 @@
 package com.febi.base;
 import java.util.*;
-import java.util.stream.Collectors;
+
+import java.lang.Math;
 
 import javax.swing.*;  
 import java.awt.event.*;  
@@ -14,6 +15,8 @@ public class GUI implements ActionListener{
 	static HashMap<Integer,String> testCondt;
     JTextField tf1,tf2,tf3;  
     JButton b1,b2,b3,b4;
+    JCheckBox chebox1,chebox2;
+    JScrollPane  scrol;  
     JTextArea area;
     JComboBox<String> cb1,cb2;
     StringBuilder sb;
@@ -23,7 +26,8 @@ public class GUI implements ActionListener{
     	test = new HashMap<String,List<String>>();
     	testCondt = new HashMap<Integer,String>();
     	sb = new StringBuilder();
-        JFrame f= new JFrame("Edit Validater");  
+        JFrame f= new JFrame("Edit Validater");
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         rb1=new JRadioButton("WNI");    
         rb1.setBounds(50,50,50,30);      
         rb2=new JRadioButton("WNP");    
@@ -60,11 +64,32 @@ public class GUI implements ActionListener{
         b4.setEnabled(false);
         b4.addActionListener(this);
         
+        
+        //checkboxes for displaying progress of the application
+        chebox1 =  new JCheckBox("Claims created");
+        chebox2 =  new JCheckBox("Claims uploaded");
+        chebox1.setBounds(450, 150, 100, 50);
+        chebox2.setBounds(450, 180, 100, 50);
+//        chebox1.setVisible(false);
+//        chebox2.setVisible(false);
+        chebox1.setSelected(false);
+        chebox2.setSelected(false);
+        chebox1.setEnabled(false);
+        chebox2.setEnabled(false);
+        
+        
         area=new JTextArea();  
         area.setBounds(50,400, 500,200);
         area.setEditable(false);
         area.setLineWrap(true);
-        f.add(area);
+        area.setWrapStyleWord(true);
+        scrol=new JScrollPane (area);
+        scrol.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrol.setBounds(50,400, 500,200);
+        f.add(scrol);
+//        f.add(area);
+        
+        f.add(chebox1);f.add(chebox2);
         f.add(rb1);f.add(rb2);
         f.add(tf1);f.add(tf2);f.add(tf3);
         f.add(b1);f.add(b2);f.add(b3);f.add(b4);
@@ -206,7 +231,9 @@ public class GUI implements ActionListener{
             	}
             }
          
-            int timeToRun = nCond*2;
+ 
+            
+            int timeToRun = (int) Math.pow(2,nCond);// times to run should be power of 2
             Test tr = new Test();
             ArrayList<boolean[]>  result = tr.scenarioGenerator(nCond);
             
@@ -314,7 +341,9 @@ public class GUI implements ActionListener{
             iterForCond++;
             
             }
-            if(result.get(i)[0]&&result.get(i)[1]) {
+            Test lo = new Test();
+            boolean checkTrigger = lo.oneAnd(result.get(i),testCondt);
+            if(checkTrigger) {
             	hi.append("then should be triggered");
             }else {
             	hi.append("then should not be triggered");
@@ -325,6 +354,15 @@ public class GUI implements ActionListener{
             }//end of block
             
 
+            //time trigger
+            
+
+            
+            chebox1.setSelected(true);
+            
+
+            
+            chebox2.setSelected(true);
 
         }
          

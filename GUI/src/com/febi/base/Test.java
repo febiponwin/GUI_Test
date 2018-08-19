@@ -1,6 +1,6 @@
 package com.febi.base;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class Test{
 
@@ -95,5 +95,79 @@ System.out.println("AND condition");
             
         }
     }
+    
+    public boolean oneAnd(boolean[] result,HashMap<Integer,String> condiT) {
+//        System.out.println("AND condition");
+       
+        int maxCond = result.length;
+        int noOfOR = 0;
+        int noOfAND = 0;
+        HashMap<Integer,Integer> ORMap = new HashMap<Integer,Integer>();
+        HashMap<Integer,Integer> ANDMap = new HashMap<Integer,Integer>();
+       
+        boolean returnVal = false;
+       
+       
+        Set<Integer> nCon = condiT.keySet();
+       
+        for(int g : nCon) {
+       
+        String condP = condiT.get(g);
+        if(condP.equalsIgnoreCase("OR")) {
+        ORMap.put(noOfOR+1, g);
+        noOfOR++;
+        }else if(condP.equalsIgnoreCase("AND")) {
+        ANDMap.put(noOfAND+1, g);
+        noOfAND++;
+        }
+        }
+       
+        if(noOfOR>0 & noOfAND>0) {//both AND & OR condition present
+       
+
+       
+        Set<Integer> orSet = ORMap.keySet();
+       
+        for(int setOr:orSet) {
+       
+        	result[ORMap.get(setOr)] =result[ORMap.get(setOr)-1] | result[ORMap.get(setOr)];
+        	result[ORMap.get(setOr)-1] = result[ORMap.get(setOr)];
+        }
+       
+        boolean test=result[0];
+        
+        for(int n=0;n<maxCond-1;n++) {
+        test &= result[n] & result[n+1];
+        }
+        returnVal = test;
+       
+       
+        }else if(noOfOR==0 & noOfAND>0 ) { //only AND condition present
+       
+        boolean test=result[0];
+       
+        for(int n=0;n<noOfAND;n++) {
+        test &= result[n] & result[n+1];
+        }
+        returnVal = test;
+       
+        }else if(noOfOR>0 & noOfAND==0 ) {//only OR condition present
+       
+        boolean test=result[0];
+       
+        for(int n=0;n<noOfOR;n++) {
+        test |= result[n] | result[n+1];
+        }
+        returnVal = test;
+        }
+       
+       
+     
+       
+       
+        return returnVal;
+
+        }
+ 
     
 }
